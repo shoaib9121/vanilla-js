@@ -1,70 +1,24 @@
-/**
- * With Constructor approach
- */
-function itemsCollection() {
-  this.items = [];
-  this.add = function (name) {
-    if (this.items.indexOf(name) === -1) {
-      this.items.push(name);
-    }
-  };
+function compose(...funcs) {
+  if (funcs.length < 2) return funcs[0];
 
-  this.remove = function (name) {
-    let index = this.items.indexOf(name);
-    if (index) {
-      this.items.splice(index, 1);
-    }
-  };
+  return funcs.reduce((acc, curr) => {
+    return (...args) => {
+      if (!args.length) return acc;
 
-  this.getNames = function () {
-    return this.items;
-  };
+      return acc(curr(...args));
+    };
+  });
 }
-function itemsBehaviors() {}
-itemsBehaviors.prototype = new itemsCollection();
-var itemsInstance = new itemsBehaviors();
-console.log(itemsInstance.items);
-itemsInstance.add("shoaib");
-itemsInstance.add("temp");
-console.log(itemsInstance.getNames());
-itemsInstance.add("ahmad");
-console.log(itemsInstance.getNames());
-itemsInstance.remove("temp");
-console.log(itemsInstance.getNames());
-console.log("==========================");
 
-/**
- * Without Constructor approach
- * @returns
- */
-function itemsCollection() {
-  let items = [];
-  let obj = {};
-  obj.add = function (name) {
-    if (items.indexOf(name) === -1) {
-      items.push(name);
-    }
-  };
+const add5 = (x) => x + 5;
+const multiply = (x, y = 2) => x * y;
+// const multiplyAndAdd5 = compose(add5);
+// const multiplyAndAdd5 = compose(add5, multiply);
+// console.log(multiplyAndAdd5(3, 2));
 
-  obj.remove = function (name) {
-    let index = items.indexOf(name);
-    if (index) {
-      items.splice(index, 1);
-    }
-  };
+const divideBy2 = (a) => a / 2;
+const square = (a) => a * a;
+const max = (...args) => Math.max.apply(null, args);
 
-  obj.getNames = function () {
-    return items;
-  };
-
-  return obj;
-}
-var itemsInstance = itemsCollection();
-console.log(itemsInstance.items);
-itemsInstance.add("shoaib");
-itemsInstance.add("temp");
-console.log(itemsInstance.getNames());
-itemsInstance.add("ahmad");
-console.log(itemsInstance.getNames());
-itemsInstance.remove("temp");
-console.log(itemsInstance.getNames());
+const multiplyAndAdd5 = compose(divideBy2, square, max);
+console.log(multiplyAndAdd5(2, 1, 4, 3));
